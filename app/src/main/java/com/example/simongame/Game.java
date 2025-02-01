@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.simongame;
 
 import android.os.Bundle;
 
@@ -9,16 +9,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 public class Game extends AppCompatActivity {
