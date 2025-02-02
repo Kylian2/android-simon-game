@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private static int EASY = 1;
     private static int MEDIUM = 2;
     private static int HARD = 3;
-
+    public static String DIFFICULTY = "DIFFICULTY";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(difficulty[0] != 0){
-                    Log.d("DEBUG", "Début de la partie avec le mode de difficulté " + difficulty[0]);
                     Intent intent = new Intent(MainActivity.this, Game.class);
+                    intent.putExtra(DIFFICULTY, difficulty[0]);
                     startActivity(intent);
                 }
             }

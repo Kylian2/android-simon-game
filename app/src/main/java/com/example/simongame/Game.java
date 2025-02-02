@@ -1,5 +1,7 @@
 package com.example.simongame;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,6 +34,9 @@ public class Game extends AppCompatActivity {
     private Button green, red, yellow, blue;
     private TextView scoreLabel;
 
+    private int time = 500;
+
+    private int difficulty;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -40,6 +46,14 @@ public class Game extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Log.d("DEBUG", MainActivity.DIFFICULTY);
+        difficulty = getIntent().getIntExtra(MainActivity.DIFFICULTY, 0);
+        if(difficulty == 0){
+            finish();
+        }
+        Log.d("DEBUG", "Début de la partie avec le mode de difficulté " + difficulty);
+
+        setDifficulty(difficulty);
 
         Button pause = findViewById(R.id.pause);
         Button resume = findViewById(R.id.resume);
@@ -75,17 +89,48 @@ public class Game extends AppCompatActivity {
         scoreLabel = findViewById(R.id.score);
 
         setButtonListeners();
+        initButton(difficulty);
 
         startNewRound();
 
     }
 
+    private void setDifficulty(int difficulty) {
+        TextView difficultyLabel = findViewById(R.id.difficultyIndicator);
+        String difficultyText;
+        switch (difficulty){
+            case 1:
+                difficultyText = "Facile";
+                break;
+            case 2:
+                difficultyText = "Moyenne";
+                break;
+            case 3:
+                difficultyText = "Difficile";
+                break;
+            default:
+                difficultyText = "Indefinie";
+        }
+        difficultyLabel.setText(difficultyText);
+    }
+
+    private void initButton(int difficulty){
+        if (difficulty == 3) {
+            green.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#33415C")));
+            red.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#7D8597")));
+            yellow.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5C677D")));
+            blue.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#979DAC")));
+        }
+    }
     private void startNewRound() {
         isUserTurn = false;
         currentGuess.clear();
         scoreLabel.setText("Score : " + score);
         pattern.add(random.nextInt(4) + 1);
-        showPattern(0);
+        if(difficulty != 1 && pattern.size() % 2 == 0 && pattern.size() < 20){
+            time -= 75;
+        }
+        handler.postDelayed(() -> showPattern(0), pattern.size() == 1 ? 1000 : time);
     }
 
     private void showPattern(int index) {
@@ -97,8 +142,8 @@ public class Game extends AppCompatActivity {
             selectedButton.setAlpha(0.5f);
             handler.postDelayed(() -> {
                 selectedButton.setAlpha(1.0f);
-                handler.postDelayed(() -> showPattern(index + 1), 500);
-            }, 500);
+                handler.postDelayed(() -> showPattern(index + 1), time);
+            }, time);
 
         } else {
             isUserTurn = true;
